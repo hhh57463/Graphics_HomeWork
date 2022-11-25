@@ -1,8 +1,0 @@
-﻿  20181375P4View.cpp
-D:\Mindol\MFC\20181375P4\20181375P4View.cpp(417,16): warning C4477: 'fwscanf_s' : 서식 문자열 '%s'에 'wchar_t *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'CString'입니다.
-D:\Mindol\MFC\20181375P4\20181375P4View.cpp(417,16): message : 이 인수는 변환 지정자에서 사용됩니다.
-D:\Mindol\MFC\20181375P4\20181375P4View.cpp(418,16): warning C4477: 'fwscanf_s' : 서식 문자열 '%s'에 'wchar_t *' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'CString'입니다.
-D:\Mindol\MFC\20181375P4\20181375P4View.cpp(418,16): message : 이 인수는 변환 지정자에서 사용됩니다.
-  Enemy.cpp
-  코드를 생성하고 있습니다...
-  20181375P4.vcxproj -> D:\Mindol\MFC\20181375P4\Debug\20181375P4.exe

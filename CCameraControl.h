@@ -24,4 +24,5 @@ public:
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedRadio2d();
 	afx_msg void OnBnClickedRadio3d();
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 };

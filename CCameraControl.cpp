@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CCameraControl, CDialogEx)
 
 	ON_BN_CLICKED(IDC_RADIO_2D, &CCameraControl::OnBnClickedRadio2d)
 	ON_BN_CLICKED(IDC_RADIO_3D, &CCameraControl::OnBnClickedRadio3d)
+	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 
@@ -69,4 +70,17 @@ void CCameraControl::OnBnClickedRadio3d()
 	pView->mode_2D = FALSE;
 	pView->mode_3D = TRUE;
 	pView->ChangeView(FALSE);
+}
+
+void CCameraControl::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nID == SC_CLOSE)
+	{
+		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
+		CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
+		
+		pView->SetTimer(0, 100, NULL);
+	}
+	CDialogEx::OnSysCommand(nID, lParam);
 }

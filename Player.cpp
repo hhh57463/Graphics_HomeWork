@@ -49,6 +49,16 @@ Player::Player()
 	vRotate.x = 90.0f;
 	vRotate.y = 0.0f;
 	vRotate.z = 0.0f;
+
+	vCollider.x = 5;
+	vCollider.y = 5;
+	vCollider.z = 5;
+
+	bulletIdx = 0;
+
+	fMoveSpeed = 5.0f;
+
+	bDie = FALSE;
 }
 
 void Player::CalcNormal(float vertex[][3], float normal[])

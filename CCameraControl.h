@@ -1,9 +1,5 @@
 ﻿#pragma once
 #include "afxdialogex.h"
-#include "CFromDlg.h"
-#include "CAtDlg.h"
-#include "CUpDlg.h"
-
 
 // CCameraControl 대화 상자
 
@@ -25,12 +21,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CTabCtrl m_tabSelection;
-	CString m_strAngle;
-	CFromDlg m_dlgFrom;
-	CAtDlg m_dlgAt;
-	CUpDlg m_dlgUp;
 	virtual BOOL OnInitDialog();
-	afx_msg void OnSelchangeTabSelection(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpinAngle(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedRadio2d();
+	afx_msg void OnBnClickedRadio3d();
 };

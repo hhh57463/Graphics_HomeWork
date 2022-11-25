@@ -6,6 +6,13 @@
 #define SMOOTH_SHADING		3
 #define CLOCKWISE			4
 #define COUNTER_CLOCKWISE	5
+#define WIDTH_SIZE			260
+#define HEIGHT_SIZE			100
+#define ENEMY_COUNT			10
+#define BULLET_COUNT		100
+#define ENEMY_SPAWN_W		250
+#define ENEMY_SPAWN_H		100
+
 
 struct Vertex
 {

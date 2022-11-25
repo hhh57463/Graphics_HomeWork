@@ -76,11 +76,11 @@ void CDisplayControl::OnRadioWire()
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 	pView->player.m_nDisplayMode = WIRE_FRAME;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		pView->enemy[i].m_nDisplayMode = WIRE_FRAME;
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		pView->player.bullet[i].m_nDisplayMode = WIRE_FRAME;
 	}
@@ -94,11 +94,11 @@ void CDisplayControl::OnRadioFlat()
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 	pView->player.m_nDisplayMode = FLAT_SHADING;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		pView->enemy[i].m_nDisplayMode = FLAT_SHADING;
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		pView->player.bullet[i].m_nDisplayMode = FLAT_SHADING;
 	}
@@ -112,11 +112,11 @@ void CDisplayControl::OnRadioSmooth()
 	CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 	CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 	pView->player.m_nDisplayMode = SMOOTH_SHADING;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		pView->enemy[i].m_nDisplayMode = SMOOTH_SHADING;
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		pView->player.bullet[i].m_nDisplayMode = SMOOTH_SHADING;
 	}
@@ -140,11 +140,11 @@ void CDisplayControl::OnClickedButtonReset()
 	m_Button->SetCheck(FALSE);
 
 	pView->player.m_nDisplayMode = WIRE_FRAME;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		pView->enemy[i].m_nDisplayMode = WIRE_FRAME;
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		pView->player.bullet[i].m_nDisplayMode = WIRE_FRAME;
 	}

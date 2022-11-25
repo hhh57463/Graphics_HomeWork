@@ -44,12 +44,20 @@ Bullet::Bullet()
 	m_nShine = 64;
 
 	vPosition.x = 0.0f;
-	vPosition.y = 0.0f;
+	vPosition.y = -1000.0f;
 	vPosition.z = 0.0f;
 
 	vRotate.x = 0.0f;
 	vRotate.y = 0.0f;
 	vRotate.z = 0.0f;
+
+	fMoveSpeed = 10.0f;
+
+	vCollider.x = 5.0f;
+	vCollider.y = 2.5f;
+	vCollider.z = 2.5f;
+
+	isFire = FALSE;
 }
 
 void Bullet::CalcNormal(float vertex[][3], float normal[])

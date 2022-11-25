@@ -44,12 +44,21 @@ Enemy::Enemy()
 	m_nShine = 64;
 
 	vPosition.x = -100.0f;
-	vPosition.y = 100.0f;
+	vPosition.y = 170.0f;
 	vPosition.z = 0.0f;
 
 	vRotate.x = 180.0f;
 	vRotate.y = 180.0f;
 	vRotate.z = 0.0f;
+
+	vCollider.x = 25;
+	vCollider.y = 10;
+	vCollider.z = 5;
+
+	fMoveSpeed = 5.0f;
+	hp = 3;
+
+	isSpawn = FALSE;
 }
 
 void Enemy::CalcNormal(float vertex[][3], float normal[])

@@ -5,6 +5,8 @@ class Enemy : public Unit
 {
 public:
 	Enemy();
+	bool isSpawn;
+	int hp;
 public:
 	void CalcNormal(float vertex[][3], float normal[]);
 	void ReduceToUnit(float vector[]);

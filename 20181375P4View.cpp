@@ -13,6 +13,8 @@
 #include "20181375P4Doc.h"
 #include "20181375P4View.h"
 #include <math.h>
+#include <cstdlib>
+#include <cTime>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +38,7 @@ BEGIN_MESSAGE_MAP(CMy20181375P4View, CView)
 	ON_COMMAND(ID_DISPLAY_CONTROL, &CMy20181375P4View::OnDisplayControl)
 	//ON_COMMAND(ID_LIGHT_MAT_CONTROL, &CMy20181375P4View::OnLightMatControl)
 	ON_WM_ERASEBKGND()
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CMy20181375P4View 생성/소멸
@@ -60,10 +63,14 @@ CMy20181375P4View::CMy20181375P4View() noexcept
 	m_UP[1] = 1;
 	m_UP[2] = 0;
 	m_Angle = 30;
+	enemySpawnCount = 0;
 	m_strFileType = _T("COFF");
 	m_strFileWinding = _T("CCW");
 	m_bDisplayCameraConrol = FALSE;
 	m_bDisplayDisplayControl = FALSE;
+	mode_2D = TRUE;
+	mode_3D = FALSE;
+
 	GetModuleFileName(NULL, path, 256);
 	playerPath = enemyPath = bulletPath = path;
 	playerPath = playerPath.Left(playerPath.ReverseFind('\\')) + _T("\\Resources\\player.off");
@@ -71,14 +78,15 @@ CMy20181375P4View::CMy20181375P4View() noexcept
 	bulletPath = bulletPath.Left(bulletPath.ReverseFind('\\')) + _T("\\Resources\\bullet.off");
 
 	PlaneSetting(player, playerPath);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		PlaneSetting(enemy[i], enemyPath);
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		PlaneSetting(player.bullet[i], bulletPath);
 	}
+	srand(time(NULL));
 }
 
 CMy20181375P4View::~CMy20181375P4View()
@@ -117,11 +125,11 @@ void CMy20181375P4View::OnDraw(CDC* pDC)
 	glLoadIdentity();
 
 	RenderScene(player);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < ENEMY_COUNT; i++)
 	{
 		RenderScene(enemy[i]);
 	}
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < BULLET_COUNT; i++)
 	{
 		RenderScene(player.bullet[i]);
 	}
@@ -190,6 +198,7 @@ bool CMy20181375P4View::InitializeOpenGL()
 
 	::glClearDepth(1.0f);
 	::glEnable(GL_DEPTH_TEST);
+	SetTimer(1, 100, NULL);
 	return TRUE;
 }
 
@@ -271,26 +280,26 @@ void CMy20181375P4View::RenderScene(Unit& unit)
 
 	switch (unit.m_nDisplayMode)
 	{
-		case WIRE_FRAME:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glDisable(GL_LIGHTING);
-			glDisable(GL_CULL_FACE);
-			glColor3f(1.0f, 1.0f, 1.0f);
-			break;
-		case FLAT_SHADING:
-			glPolygonMode(GL_FRONT, GL_FILL);
-			glEnable(GL_LIGHTING);
-			glEnable(GL_CULL_FACE);
-			glShadeModel(GL_FLAT);
-			break;
-		case SMOOTH_SHADING:
-			glPolygonMode(GL_FRONT, GL_FILL);
-			glEnable(GL_LIGHTING);
-			glEnable(GL_CULL_FACE);
-			glShadeModel(GL_SMOOTH);
-			break;
-		default:
-			break;
+	case WIRE_FRAME:
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_CULL_FACE);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		break;
+	case FLAT_SHADING:
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_CULL_FACE);
+		glShadeModel(GL_FLAT);
+		break;
+	case SMOOTH_SHADING:
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_CULL_FACE);
+		glShadeModel(GL_SMOOTH);
+		break;
+	default:
+		break;
 	}
 
 	glLightfv(GL_LIGHT0, GL_POSITION, unit.m_fLightPos);
@@ -335,21 +344,33 @@ void CMy20181375P4View::RenderScene(Unit& unit)
 void CMy20181375P4View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	//switch (nChar)
-	//{
-	//case VK_UP:
-	//	m_fRotX -= 5.0f;
-	//	break;
-	//case VK_DOWN:
-	//	m_fRotX += 5.0f;
-	//	break;
-	//case VK_LEFT:
-	//	m_fRotY -= 5.0f;
-	//	break;
-	//case VK_RIGHT:
-	//	m_fRotY += 5.0f;
-	//	break;
-	//}
+	switch (nChar)
+	{
+	case VK_UP:
+
+		break;
+	case VK_DOWN:
+		break;
+	case VK_LEFT:
+		if (!player.bDie)
+		{
+			if (player.vPosition.x > -WIDTH_SIZE)
+				player.vPosition.x -= player.fMoveSpeed;
+			else
+				player.vPosition.x = -(float)WIDTH_SIZE;
+		}
+		break;
+	case VK_RIGHT:
+		if (!player.bDie)
+		{
+			if (player.vPosition.x < WIDTH_SIZE)
+				player.vPosition.x += player.fMoveSpeed;
+			else
+				player.vPosition.x = (float)WIDTH_SIZE;
+		}
+		break;
+	}
+
 	RedrawWindow();
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
@@ -362,99 +383,8 @@ void CMy20181375P4View::OnCameraControl()
 		m_dlgCameraControl.Create(IDD_DIALOG_CAMERA, this);
 		m_bDisplayCameraConrol = TRUE;
 	}
-	m_dlgCameraControl.MoveWindow(655, 55, 320, 400);
+	m_dlgCameraControl.MoveWindow(655, 55, 100, 150);
 	m_dlgCameraControl.ShowWindow(SW_SHOW);
-}
-
-
-void CMy20181375P4View::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	//if (m_bRotate)
-	//{
-	//	if (GetCapture() == this)
-	//	{
-	//		m_fRotX += (point.y - m_ptMouseDown.y) / 3.6;
-	//		m_fRotY += (point.x - m_ptMouseDown.x) / 3.6;
-	//	}
-	//}
-	if (m_bZoom)
-	{
-		if (GetCapture() == this)
-		{
-			m_fTransZ += (point.y - m_ptMouseDown.y);
-
-			m_From[2] = m_fTransZ;
-			m_dlgCameraControl.m_dlgFrom.m_strFromZ.Format(_T("%.1f"), m_From[2]);
-
-			if (m_bDisplayCameraConrol)
-				m_dlgCameraControl.m_dlgFrom.UpdateData(FALSE);
-		}
-	}
-	m_ptMouseDown = point;
-	InvalidateRect(NULL, FALSE);
-
-	CView::OnMouseMove(nFlags, point);
-}
-
-
-void CMy20181375P4View::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	m_bRotate = TRUE;
-	m_bZoom = FALSE;
-	m_ptMouseDown = point;
-	SetCapture();
-
-	HCURSOR hCursor = AfxGetApp()->LoadCursor(IDC_CURSOR_ROTATE);
-	SetCursor(hCursor);
-
-	CRect rectClient;
-	GetClientRect(&rectClient);
-	ClientToScreen(&rectClient);
-	::ClipCursor(&rectClient);
-	CView::OnLButtonDown(nFlags, point);
-}
-
-
-void CMy20181375P4View::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	m_ptMouseDown = CPoint(0, 0);
-	ReleaseCapture();
-	::ClipCursor(NULL);
-	CView::OnLButtonUp(nFlags, point);
-}
-
-
-void CMy20181375P4View::OnRButtonDown(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	m_bRotate = FALSE;
-	m_bZoom = TRUE;
-	m_ptMouseDown = point;
-	SetCapture();
-
-	HCURSOR hCursor = AfxGetApp()->LoadCursor(IDC_CURSOR_ZOOM);
-	SetCursor(hCursor);
-
-	CRect rectClient;
-	GetClientRect(&rectClient);
-	ClientToScreen(&rectClient);
-	::ClipCursor(&rectClient);
-
-	CView::OnRButtonDown(nFlags, point);
-}
-
-
-void CMy20181375P4View::OnRButtonUp(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	m_ptMouseDown = CPoint(0, 0);
-
-	ReleaseCapture();
-	::ClipCursor(NULL);
-	CView::OnRButtonUp(nFlags, point);
 }
 
 void CMy20181375P4View::OnDisplayControl()
@@ -465,7 +395,7 @@ void CMy20181375P4View::OnDisplayControl()
 		m_dlgDisplayControl.Create(IDD_DIALOG_DISPLAY, this);
 		m_bDisplayDisplayControl = TRUE;
 	}
-	m_dlgDisplayControl.MoveWindow(655, 340, 290, 330);
+	m_dlgDisplayControl.MoveWindow(655, 340, 200, 200);
 	m_dlgDisplayControl.ShowWindow(SW_SHOW);
 }
 
@@ -514,4 +444,141 @@ void CMy20181375P4View::PlaneSetting(Unit& unit, CString path)
 
 	unit.CalcFaceNormal();
 	unit.CalcVertexNormal();
+}
+
+void CMy20181375P4View::ChangeView(bool mode_2d)
+{
+	if (mode_2d)
+	{
+		for (float i = 0.0f; i < 100.0f; i += 0.1f)
+		{
+			m_At[2] = i;
+
+			gluLookAt(m_From[0], m_From[1], m_From[2], m_At[0], m_At[1], m_At[2], m_UP[0], m_UP[1], m_UP[2]);
+
+		}
+		m_At[2] = 100.0f;
+	}
+	else
+	{
+		for (float i = 100.0f; i > 0.0f; i -= 0.1f)
+		{
+			m_At[2] = i;
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+
+			gluPerspective(m_Angle, m_dAspectRatio, 0.1f, 5000.0f);
+
+			gluLookAt(m_From[0], m_From[1], m_From[2], m_At[0], m_At[1], m_At[2], m_UP[0], m_UP[1], m_UP[2]);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			RenderScene(player);
+			for (int i = 0; i < ENEMY_COUNT; i++)
+			{
+				RenderScene(enemy[i]);
+			}
+			for (int i = 0; i < BULLET_COUNT; i++)
+			{
+				RenderScene(player.bullet[i]);
+			}
+			::glFinish();
+			::SwapBuffers(m_pDC->GetSafeHdc());
+		}
+		m_At[2] = 0.0f;
+	}
+}
+
+void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (!player.bullet[player.bulletIdx].isFire)
+	{
+		player.bullet[player.bulletIdx].vPosition = player.vPosition;
+		player.bullet[player.bulletIdx].isFire = TRUE;
+	}
+
+	for (int i = 0; i < BULLET_COUNT; i++)
+	{
+		if (player.bullet[i].isFire)
+		{
+			player.bullet[i].vPosition.y += player.bullet[i].fMoveSpeed;
+			if (player.bullet[i].vPosition.y > 250.0f)
+			{
+				player.bullet[i].vPosition.y = -1000.0f;
+				player.bullet[i].isFire = FALSE;
+			}
+		}
+	}
+	if (player.bulletIdx < BULLET_COUNT - 1)
+		player.bulletIdx++;
+	else if (player.bulletIdx == BULLET_COUNT - 1)
+		player.bulletIdx = 0;
+
+	if (!enemy[enemySpawnCount].isSpawn)
+	{
+		if (rand() % 2 == 0)
+			enemy[enemySpawnCount].vPosition.x = rand() % ENEMY_SPAWN_W;
+		else if (rand() % 2 == 1)
+			enemy[enemySpawnCount].vPosition.x = -(rand() % ENEMY_SPAWN_W);
+		enemy[enemySpawnCount].isSpawn = TRUE;
+	}
+
+	for (int i = 0; i < ENEMY_COUNT; i++)
+	{
+		if (enemy[i].isSpawn)
+		{
+			enemy[i].vPosition.y -= enemy[i].fMoveSpeed;
+			if (enemy[i].vPosition.y < -150.0f || enemy[i].hp <= 0)
+			{
+				enemy[i].vPosition.y = 170.0f;
+				enemy[i].hp = 3;
+				enemy[i].isSpawn = FALSE;
+			}
+		}
+	}
+	if (enemySpawnCount < ENEMY_COUNT - 1)
+		enemySpawnCount++;
+	else if (enemySpawnCount == ENEMY_COUNT - 1)
+		enemySpawnCount = 0;
+
+	for (int i = 0; i < BULLET_COUNT; i++)
+	{
+		if (!player.bullet[i].isFire)
+			continue;
+		for (int j = 0; j < ENEMY_COUNT; j++)
+		{
+			if (!enemy[j].isSpawn)
+				continue;
+
+			if ((player.bullet[i].vPosition.x + player.bullet[i].vCollider.x) < (enemy[j].vPosition.x + enemy[j].vCollider.x) &&
+				(player.bullet[i].vPosition.x - player.bullet[i].vCollider.x) > (enemy[j].vPosition.x - enemy[j].vCollider.x) &&
+				(player.bullet[i].vPosition.y + player.bullet[i].vCollider.y) < (enemy[j].vPosition.y + enemy[j].vCollider.y) &&
+				(player.bullet[i].vPosition.y - player.bullet[i].vCollider.y) > (enemy[j].vPosition.y - enemy[j].vCollider.y))
+			{
+				enemy[j].hp--;
+				player.bullet[i].isFire = FALSE;
+				player.bullet[i].vPosition.y = -1000.0f;
+			}
+		}
+	}
+
+	for (int i = 0; i < ENEMY_COUNT; i++)
+	{
+		if (!enemy[i].isSpawn)
+			continue;
+
+		if ((player.vPosition.x + player.vCollider.x) < (enemy[i].vPosition.x + enemy[i].vCollider.x) &&
+			(player.vPosition.x - player.vCollider.x) > (enemy[i].vPosition.x - enemy[i].vCollider.x) &&
+			(player.vPosition.y + player.vCollider.y) < (enemy[i].vPosition.y + enemy[i].vCollider.y) &&
+			(player.vPosition.y - player.vCollider.y) > (enemy[i].vPosition.y - enemy[i].vCollider.y))
+		{
+			player.vPosition.x = 10000.0f;
+			player.vPosition.y = 10000.0f;
+			player.bDie = TRUE;
+		}
+	}
+
+	RedrawWindow();
+	CView::OnTimer(nIDEvent);
 }

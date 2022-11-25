@@ -8,7 +8,7 @@ class Player : public Unit
 public:
 	Player();
 public:
-	Bullet bullet[30];
+	Bullet bullet[BULLET_COUNT];
 	int bulletIdx;
 public:
 	void CalcNormal(float vertex[][3], float normal[]);

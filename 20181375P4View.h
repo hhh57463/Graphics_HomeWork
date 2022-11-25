@@ -74,11 +74,6 @@ public:
 	CCameraControl m_dlgCameraControl;
 	afx_msg void OnCameraControl();
 	bool m_bDisplayCameraConrol;
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	CDisplayControl m_dlgDisplayControl;
 	afx_msg void OnDisplayControl();
 	bool m_bDisplayDisplayControl;
@@ -86,12 +81,17 @@ public:
 
 public:
 	Player player;
-	Enemy enemy[10];
+	Enemy enemy[ENEMY_COUNT];
+	GLint enemySpawnCount;
 	void PlaneSetting(Unit& unit, CString path);
 	TCHAR path[256];
 	CString playerPath;
 	CString enemyPath;
 	CString bulletPath;
+	bool mode_2D;
+	bool mode_3D;
+	void ChangeView(bool mode);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 #ifndef _DEBUG  // 20181375P4View.cpp의 디버그 버전

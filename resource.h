@@ -49,8 +49,11 @@
 #define IDC_EDIT_POSITION_Z             1034
 #define IDC_SPIN_POSITION_X             1035
 #define IDC_SPIN_POSITION_Y             1036
+#define IDC_RADIO_2D                    1036
 #define IDC_SPIN3                       1037
 #define IDC_SPIN_POSITION_Z             1037
+#define IDC_RADIO2                      1037
+#define IDC_RADIO_3D                    1037
 #define ID_32771                        32771
 #define ID_CAMERA_CONTROL               32772
 #define ID_32773                        32773
@@ -64,7 +67,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        328
 #define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1036
+#define _APS_NEXT_CONTROL_VALUE         1037
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

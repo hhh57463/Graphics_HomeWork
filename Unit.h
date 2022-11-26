@@ -7,7 +7,7 @@
 #define CLOCKWISE			4
 #define COUNTER_CLOCKWISE	5
 #define WIDTH_SIZE			260
-#define HEIGHT_SIZE			100
+#define HEIGHT_SIZE			120
 #define ENEMY_COUNT			10
 #define BULLET_COUNT		100
 #define ENEMY_SPAWN_W		250

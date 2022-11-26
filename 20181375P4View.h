@@ -57,10 +57,6 @@ public:
 	void RenderScene(Unit& unit);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	CPoint m_ptMouseDown;
-	bool m_bRotate;
-	bool m_bZoom;
-	GLfloat m_fTransZ;
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	GLdouble m_dAspectRatio;
 	GLfloat m_From[3];
@@ -78,6 +74,8 @@ public:
 	bool m_bDisplayDisplayControl;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
+
+
 public:
 	Player player;
 	Enemy enemy[ENEMY_COUNT];
@@ -87,9 +85,10 @@ public:
 	CString playerPath;
 	CString enemyPath;
 	CString bulletPath;
+	bool ChangeMode;
 	bool mode_2D;
 	bool mode_3D;
-	void ChangeView(bool mode);
+	GLint FrameCount;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 

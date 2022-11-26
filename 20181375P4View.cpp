@@ -40,28 +40,23 @@ END_MESSAGE_MAP()
 CMy20181375P4View::CMy20181375P4View() noexcept
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
-	//m_fRotX = 0.0f;
-	//m_fRotY = 0.0f;
-	m_ptMouseDown = 0.0f;
-	m_bRotate = FALSE;
-	m_bZoom = FALSE;
-	m_fTransZ = 30;
 	m_From[0] = 0;
 	m_From[1] = 0;
 	m_From[2] = 500;
 	m_At[0] = 0;
 	m_At[1] = 0;
-	//m_At[1] = 250;
 	m_At[2] = -100;
 	m_UP[0] = 0;
 	m_UP[1] = 1;
 	m_UP[2] = 0;
 	m_Angle = 30;
 	enemySpawnCount = 0;
+	FrameCount = 5;
 	m_strFileType = _T("COFF");
 	m_strFileWinding = _T("CCW");
 	m_bDisplayCameraConrol = FALSE;
 	m_bDisplayDisplayControl = FALSE;
+	ChangeMode = FALSE;
 	mode_2D = TRUE;
 	mode_3D = FALSE;
 
@@ -341,9 +336,18 @@ void CMy20181375P4View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	switch (nChar)
 	{
 	case VK_UP:
-
+		if (mode_3D)
+		{
+			if (player.vPosition.z < HEIGHT_SIZE)
+			player.vPosition.z += player.fMoveSpeed;
+		}
 		break;
 	case VK_DOWN:
+		if (mode_3D)
+		{
+			if (player.vPosition.z > -HEIGHT_SIZE)
+			player.vPosition.z -= player.fMoveSpeed;
+		}
 		break;
 	case VK_LEFT:
 		if (!player.bDie)
@@ -372,6 +376,8 @@ void CMy20181375P4View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 void CMy20181375P4View::OnCameraControl()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	ChangeMode = TRUE;
+
 	if (!m_bDisplayCameraConrol)
 	{
 		m_dlgCameraControl.Create(IDD_DIALOG_CAMERA, this);
@@ -441,139 +447,198 @@ void CMy20181375P4View::PlaneSetting(Unit& unit, CString path)
 	unit.CalcVertexNormal();
 }
 
-void CMy20181375P4View::ChangeView(bool mode_2d)
-{
-	if (mode_2d)
-	{
-		for (float i = 0.0f; i < 100.0f; i += 0.1f)
-		{
-			m_At[2] = i;
-
-			gluLookAt(m_From[0], m_From[1], m_From[2], m_At[0], m_At[1], m_At[2], m_UP[0], m_UP[1], m_UP[2]);
-
-		}
-		m_At[2] = 100.0f;
-	}
-	else
-	{
-		for (float i = 100.0f; i > 0.0f; i -= 0.1f)
-		{
-			m_At[2] = i;
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-
-			gluPerspective(m_Angle, m_dAspectRatio, 0.1f, 5000.0f);
-
-			gluLookAt(m_From[0], m_From[1], m_From[2], m_At[0], m_At[1], m_At[2], m_UP[0], m_UP[1], m_UP[2]);
-
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			RenderScene(player);
-			for (int i = 0; i < ENEMY_COUNT; i++)
-			{
-				RenderScene(enemy[i]);
-			}
-			for (int i = 0; i < BULLET_COUNT; i++)
-			{
-				RenderScene(player.bullet[i]);
-			}
-			::glFinish();
-			::SwapBuffers(m_pDC->GetSafeHdc());
-		}
-		m_At[2] = 0.0f;
-	}
-}
-
 void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	if (!player.bullet[player.bulletIdx].isFire)
+	if (ChangeMode)
 	{
-		player.bullet[player.bulletIdx].vPosition = player.vPosition;
-		player.bullet[player.bulletIdx].isFire = TRUE;
-	}
-
-	for (int i = 0; i < BULLET_COUNT; i++)
-	{
-		if (player.bullet[i].isFire)
+		if (mode_2D && !mode_3D)
 		{
-			player.bullet[i].vPosition.y += player.bullet[i].fMoveSpeed;
-			if (player.bullet[i].vPosition.y > 250.0f)
+			if (FrameCount > 0)
 			{
-				player.bullet[i].vPosition.y = -1000.0f;
-				player.bullet[i].isFire = FALSE;
+				m_From[1] += 120;
+				m_From[2] += 90;
+				m_At[2] -= 20;
+				FrameCount--;
+			}
+			else
+			{
+				m_From[1] = 0;
+				m_From[2] = 500;
+				m_At[2] = -100;
+				FrameCount = 5;
+				player.vPosition.z = 0.0f;
+				KillTimer(1);
+				ChangeMode = FALSE;
+			}
+		}
+		else if (mode_3D && !mode_2D)
+		{
+			if (FrameCount > 0)
+			{
+				m_From[1] -= 120;
+				m_From[2] -= 90;
+				m_At[2] += 20;
+				FrameCount--;
+			}
+			else
+			{
+				m_From[1] = -600;
+				m_From[2] = 50;
+				m_At[2] = 0;
+				FrameCount = 5;
+				KillTimer(1);
+				ChangeMode = FALSE;
 			}
 		}
 	}
-	if (player.bulletIdx < BULLET_COUNT - 1)
-		player.bulletIdx++;
-	else if (player.bulletIdx == BULLET_COUNT - 1)
-		player.bulletIdx = 0;
-
-	if (!enemy[enemySpawnCount].isSpawn)
+	else
 	{
-		if (rand() % 2 == 0)
-			enemy[enemySpawnCount].vPosition.x = rand() % ENEMY_SPAWN_W;
-		else if (rand() % 2 == 1)
-			enemy[enemySpawnCount].vPosition.x = -(rand() % ENEMY_SPAWN_W);
-		enemy[enemySpawnCount].isSpawn = TRUE;
-	}
-
-	for (int i = 0; i < ENEMY_COUNT; i++)
-	{
-		if (enemy[i].isSpawn)
+		if (!player.bullet[player.bulletIdx].isFire)
 		{
-			enemy[i].vPosition.y -= enemy[i].fMoveSpeed;
-			if (enemy[i].vPosition.y < -150.0f || enemy[i].hp <= 0)
+			player.bullet[player.bulletIdx].vPosition = player.vPosition;
+			player.bullet[player.bulletIdx].isFire = TRUE;
+		}
+
+		for (int i = 0; i < BULLET_COUNT; i++)
+		{
+			if (player.bullet[i].isFire)
 			{
-				enemy[i].vPosition.y = 170.0f;
-				enemy[i].hp = 5;
-				enemy[i].isSpawn = FALSE;
+				player.bullet[i].vPosition.y += player.bullet[i].fMoveSpeed;
+				if (player.bullet[i].vPosition.y > 250.0f)
+				{
+					player.bullet[i].vPosition.y = -1000.0f;
+					player.bullet[i].isFire = FALSE;
+				}
 			}
 		}
-	}
-	if (enemySpawnCount < ENEMY_COUNT - 1)
-		enemySpawnCount++;
-	else if (enemySpawnCount == ENEMY_COUNT - 1)
-		enemySpawnCount = 0;
+		if (player.bulletIdx < BULLET_COUNT - 1)
+			player.bulletIdx++;
+		else if (player.bulletIdx == BULLET_COUNT - 1)
+			player.bulletIdx = 0;
 
-	for (int i = 0; i < BULLET_COUNT; i++)
-	{
-		if (!player.bullet[i].isFire)
-			continue;
-		for (int j = 0; j < ENEMY_COUNT; j++)
+		if (!enemy[enemySpawnCount].isSpawn)
 		{
-			if (!enemy[j].isSpawn)
+			GLint w = rand() % 2;
+			GLint h = rand() % 2;
+			if (w == 0)
+				enemy[enemySpawnCount].vPosition.x = rand() % ENEMY_SPAWN_W;
+			else if (w == 1)
+				enemy[enemySpawnCount].vPosition.x = -(rand() % ENEMY_SPAWN_W);
+			if (h == 0)
+				enemy[enemySpawnCount].vPosition.z = rand() % ENEMY_SPAWN_H;
+			else if (h == 1)
+				enemy[enemySpawnCount].vPosition.z = -(rand() % ENEMY_SPAWN_H);
+			enemy[enemySpawnCount].isSpawn = TRUE;
+		}
+
+		for (int i = 0; i < ENEMY_COUNT; i++)
+		{
+			if (enemy[i].isSpawn)
+			{
+				enemy[i].vPosition.y -= enemy[i].fMoveSpeed;
+				if (mode_2D)
+				{
+					if (enemy[i].vPosition.y < -150.0f)
+					{
+						enemy[i].vPosition.y = 170.0f;
+						enemy[i].hp = 5;
+						enemy[i].isSpawn = FALSE;
+					}
+				}
+				if (mode_3D)
+				{
+					if (enemy[i].vPosition.y < -250.0f)
+					{
+						enemy[i].vPosition.y = 170.0f;
+						enemy[i].hp = 5;
+						enemy[i].isSpawn = FALSE;
+					}
+				}
+				if (enemy[i].hp <= 0)
+				{
+					enemy[i].vPosition.y = 170.0f;
+					enemy[i].hp = 5;
+					enemy[i].isSpawn = FALSE;
+				}
+			}
+		}
+		if (enemySpawnCount < ENEMY_COUNT - 1)
+			enemySpawnCount++;
+		else if (enemySpawnCount == ENEMY_COUNT - 1)
+			enemySpawnCount = 0;
+
+		for (int i = 0; i < BULLET_COUNT; i++)
+		{
+			if (!player.bullet[i].isFire)
+				continue;
+			for (int j = 0; j < ENEMY_COUNT; j++)
+			{
+				if (!enemy[j].isSpawn)
+					continue;
+
+				if (mode_2D)
+				{
+					if ((player.bullet[i].vPosition.x + player.bullet[i].vCollider.x) < (enemy[j].vPosition.x + enemy[j].vCollider.x) &&
+						(player.bullet[i].vPosition.x - player.bullet[i].vCollider.x) > (enemy[j].vPosition.x - enemy[j].vCollider.x) &&
+						(player.bullet[i].vPosition.y + player.bullet[i].vCollider.y) < (enemy[j].vPosition.y + enemy[j].vCollider.y) &&
+						(player.bullet[i].vPosition.y - player.bullet[i].vCollider.y) > (enemy[j].vPosition.y - enemy[j].vCollider.y))
+					{
+						enemy[j].hp--;
+						player.bullet[i].isFire = FALSE;
+						player.bullet[i].vPosition.y = -1000.0f;
+					}
+				}
+				if (mode_3D)
+				{
+					if ((player.bullet[i].vPosition.x + player.bullet[i].vCollider.x) < (enemy[j].vPosition.x + enemy[j].vCollider.x) &&
+						(player.bullet[i].vPosition.x - player.bullet[i].vCollider.x) > (enemy[j].vPosition.x - enemy[j].vCollider.x) &&
+						(player.bullet[i].vPosition.y + player.bullet[i].vCollider.y) < (enemy[j].vPosition.y + enemy[j].vCollider.y) &&
+						(player.bullet[i].vPosition.y - player.bullet[i].vCollider.y) > (enemy[j].vPosition.y - enemy[j].vCollider.y) &&
+						(player.bullet[i].vPosition.z + player.bullet[i].vCollider.z) < (enemy[j].vPosition.z + enemy[j].vCollider.z) &&
+						(player.bullet[i].vPosition.z - player.bullet[i].vCollider.z) > (enemy[j].vPosition.z - enemy[j].vCollider.z))
+					{
+						enemy[j].hp--;
+						player.bullet[i].isFire = FALSE;
+						player.bullet[i].vPosition.y = -1000.0f;
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < ENEMY_COUNT; i++)
+		{
+			if (!enemy[i].isSpawn)
 				continue;
 
-			if ((player.bullet[i].vPosition.x + player.bullet[i].vCollider.x) < (enemy[j].vPosition.x + enemy[j].vCollider.x) &&
-				(player.bullet[i].vPosition.x - player.bullet[i].vCollider.x) > (enemy[j].vPosition.x - enemy[j].vCollider.x) &&
-				(player.bullet[i].vPosition.y + player.bullet[i].vCollider.y) < (enemy[j].vPosition.y + enemy[j].vCollider.y) &&
-				(player.bullet[i].vPosition.y - player.bullet[i].vCollider.y) > (enemy[j].vPosition.y - enemy[j].vCollider.y))
+			if (mode_2D)
 			{
-				enemy[j].hp--;
-				player.bullet[i].isFire = FALSE;
-				player.bullet[i].vPosition.y = -1000.0f;
+				if ((player.vPosition.x + player.vCollider.x) < (enemy[i].vPosition.x + enemy[i].vCollider.x) &&
+					(player.vPosition.x - player.vCollider.x) > (enemy[i].vPosition.x - enemy[i].vCollider.x) &&
+					(player.vPosition.y + player.vCollider.y) < (enemy[i].vPosition.y + enemy[i].vCollider.y) &&
+					(player.vPosition.y - player.vCollider.y) > (enemy[i].vPosition.y - enemy[i].vCollider.y))
+				{
+					player.vPosition.x = 10000.0f;
+					player.vPosition.y = 10000.0f;
+					player.bDie = TRUE;
+				}
+			}
+			if (mode_3D)
+			{
+				if ((player.vPosition.x + player.vCollider.x) < (enemy[i].vPosition.x + enemy[i].vCollider.x) &&
+					(player.vPosition.x - player.vCollider.x) > (enemy[i].vPosition.x - enemy[i].vCollider.x) &&
+					(player.vPosition.y + player.vCollider.y) < (enemy[i].vPosition.y + enemy[i].vCollider.y) &&
+					(player.vPosition.y - player.vCollider.y) > (enemy[i].vPosition.y - enemy[i].vCollider.y) &&
+					(player.vPosition.z + player.vCollider.z) < (enemy[i].vPosition.z + enemy[i].vCollider.z) &&
+					(player.vPosition.z - player.vCollider.z) > (enemy[i].vPosition.z - enemy[i].vCollider.z))
+				{
+					player.vPosition.x = 10000.0f;
+					player.vPosition.y = 10000.0f;
+					player.bDie = TRUE;
+				}
 			}
 		}
 	}
-
-	for (int i = 0; i < ENEMY_COUNT; i++)
-	{
-		if (!enemy[i].isSpawn)
-			continue;
-
-		if ((player.vPosition.x + player.vCollider.x) < (enemy[i].vPosition.x + enemy[i].vCollider.x) &&
-			(player.vPosition.x - player.vCollider.x) > (enemy[i].vPosition.x - enemy[i].vCollider.x) &&
-			(player.vPosition.y + player.vCollider.y) < (enemy[i].vPosition.y + enemy[i].vCollider.y) &&
-			(player.vPosition.y - player.vCollider.y) > (enemy[i].vPosition.y - enemy[i].vCollider.y))
-		{
-			player.vPosition.x = 10000.0f;
-			player.vPosition.y = 10000.0f;
-			player.bDie = TRUE;
-		}
-	}
-
 	RedrawWindow();
 	CView::OnTimer(nIDEvent);
 }

@@ -58,7 +58,8 @@ void CCameraControl::OnBnClickedRadio2d()
 	CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 	pView->mode_2D = TRUE;
 	pView->mode_3D = FALSE;
-	pView->ChangeView(TRUE);
+	pView->ChangeMode = TRUE;
+	pView->SetTimer(1, 100, NULL);
 }
 
 
@@ -69,7 +70,8 @@ void CCameraControl::OnBnClickedRadio3d()
 	CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 	pView->mode_2D = FALSE;
 	pView->mode_3D = TRUE;
-	pView->ChangeView(FALSE);
+	pView->ChangeMode = TRUE;
+	pView->SetTimer(1, 100, NULL);
 }
 
 void CCameraControl::OnSysCommand(UINT nID, LPARAM lParam)
@@ -80,6 +82,7 @@ void CCameraControl::OnSysCommand(UINT nID, LPARAM lParam)
 		CMainFrame* pFrame = (CMainFrame*)AfxGetMainWnd();
 		CMy20181375P4View* pView = (CMy20181375P4View*)(pFrame->GetActiveView());
 		
+		pView->ChangeMode = FALSE;
 		pView->SetTimer(0, 100, NULL);
 	}
 	CDialogEx::OnSysCommand(nID, lParam);

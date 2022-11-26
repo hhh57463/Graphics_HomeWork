@@ -74,8 +74,6 @@ public:
 	bool m_bDisplayDisplayControl;
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 
-
-
 public:
 	Player player;
 	Enemy enemy[ENEMY_COUNT];

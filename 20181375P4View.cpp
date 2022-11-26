@@ -51,7 +51,7 @@ CMy20181375P4View::CMy20181375P4View() noexcept
 	m_UP[2] = 0;
 	m_Angle = 30;
 	enemySpawnCount = 0;
-	FrameCount = 5;
+	FrameCount = 10;
 	m_strFileType = _T("COFF");
 	m_strFileWinding = _T("CCW");
 	m_bDisplayCameraConrol = FALSE;
@@ -456,9 +456,9 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (FrameCount > 0)
 			{
-				m_From[1] += 120;
-				m_From[2] += 90;
-				m_At[2] -= 20;
+				m_From[1] += 60;
+				m_From[2] += 45;
+				m_At[2] -= 10;
 				FrameCount--;
 			}
 			else
@@ -466,7 +466,7 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 				m_From[1] = 0;
 				m_From[2] = 500;
 				m_At[2] = -100;
-				FrameCount = 5;
+				FrameCount = 10;
 				player.vPosition.z = 0.0f;
 				KillTimer(1);
 				ChangeMode = FALSE;
@@ -476,9 +476,9 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 		{
 			if (FrameCount > 0)
 			{
-				m_From[1] -= 120;
-				m_From[2] -= 90;
-				m_At[2] += 20;
+				m_From[1] -= 60;
+				m_From[2] -= 45;
+				m_At[2] += 10;
 				FrameCount--;
 			}
 			else
@@ -486,7 +486,7 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 				m_From[1] = -600;
 				m_From[2] = 50;
 				m_At[2] = 0;
-				FrameCount = 5;
+				FrameCount = 10;
 				KillTimer(1);
 				ChangeMode = FALSE;
 			}

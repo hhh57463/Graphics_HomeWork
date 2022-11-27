@@ -87,6 +87,7 @@ public:
 	bool mode_2D;
 	bool mode_3D;
 	GLint FrameCount;
+	GLint killCount;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 

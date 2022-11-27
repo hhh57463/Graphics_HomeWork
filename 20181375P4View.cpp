@@ -52,6 +52,7 @@ CMy20181375P4View::CMy20181375P4View() noexcept
 	m_Angle = 30;
 	enemySpawnCount = 0;
 	FrameCount = 10;
+	killCount = 0;
 	m_strFileType = _T("COFF");
 	m_strFileWinding = _T("CCW");
 	m_bDisplayCameraConrol = FALSE;
@@ -560,6 +561,7 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 					enemy[i].vPosition.y = 170.0f;
 					enemy[i].hp = 5;
 					enemy[i].isSpawn = FALSE;
+					killCount++;
 				}
 			}
 		}
@@ -621,6 +623,9 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 					player.vPosition.x = 10000.0f;
 					player.vPosition.y = 10000.0f;
 					player.bDie = TRUE;
+					CString endingStr = _T("");
+					endingStr.Format(_T("처치한 적 : %d"), killCount);
+					MessageBox(endingStr);
 				}
 			}
 			if (mode_3D)
@@ -635,10 +640,14 @@ void CMy20181375P4View::OnTimer(UINT_PTR nIDEvent)
 					player.vPosition.x = 10000.0f;
 					player.vPosition.y = 10000.0f;
 					player.bDie = TRUE;
+					CString endingStr = _T("");
+					endingStr.Format(_T("처치한 적 : %d"), killCount);
+					MessageBox(endingStr);
 				}
 			}
 		}
 	}
+
 	RedrawWindow();
 	CView::OnTimer(nIDEvent);
 }

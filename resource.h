@@ -10,9 +10,7 @@
 #define IDD_DIALOG_FROM                 312
 #define IDD_DIALOG_AT                   314
 #define IDD_DIALOG_UP                   316
-#define IDC_CURSOR_ROTATE               318
 #define IDC_CURSOR2                     319
-#define IDC_CURSOR_ZOOM                 319
 #define IDD_DIALOG_DISPLAY              320
 #define IDD_DIALOG_LIGHT                326
 #define IDC_TAB_SELECTION               1000
